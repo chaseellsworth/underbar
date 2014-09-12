@@ -87,13 +87,41 @@ var _ = {};
 
   // Return all elements of an array that pass a truth test.
   
-  _.filter = function(collection, test) {
+  var filterCallback = function(number){
+    if (number % 2 === 0){
+      return true
+    }
   };
+  
+  _.filter = function(collection, test) {
+    var odd = [];
+    var even = [];
+    for (var i = 0; i < collection.length; i++) {
+      if (filterCallback(collection[i]) === true) {
+        even.push(collection[i]);
+      }else if (filterCallback(collection[i]) === false){
+        odd.push(collection[i]);
+      } 
+  }
+  return even;
+};
 
   // Return all elements of an array that don't pass a truth test.
+  var rejectCallback = function(number){
+    if (number % 2 === 0) {
+      return true;
+    }
+  }
+
   _.reject = function(collection, test) {
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
+    for (var i = 0; i < collection.length; i++) {
+      if (test(collection[i]) === true){
+        collection.splice(i, 1);
+      }
+    }
+    return collection;
   };
 
   // Produce a duplicate-free version of the array.
