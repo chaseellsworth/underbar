@@ -40,7 +40,7 @@ var _ = {};
   // last element.
   _.last = function(array, n) {
     if (n === 0) {
-      return;
+      return [];
     }else{
       return n === undefined ? array[array.length-1] : array.slice(-n);
     }
@@ -87,23 +87,21 @@ var _ = {};
 
   // Return all elements of an array that pass a truth test.
   
-  var filterCallback = function(number){
-    if (number % 2 === 0){
-      return true
-    }
-  };
+  var isEven = function(num){ return (number % 2 === 0);};
+  var isOdd = function(num){ return (number % 2 === 1);};
   
   _.filter = function(collection, test) {
     var odd = [];
     var even = [];
+    var result = [];
     for (var i = 0; i < collection.length; i++) {
-      if (filterCallback(collection[i]) === true) {
-        even.push(collection[i]);
-      }else if (filterCallback(collection[i]) === false){
-        odd.push(collection[i]);
+      if (test(collection[i]) === true) {
+        result.push(collection[i]);
+      ///}else if (filterCallback(collection[i]) === false){
+        ///odd.push(collection[i]);
       } 
-  }
-  return even;
+    }
+  return result;
 };
 
   // Return all elements of an array that don't pass a truth test.
@@ -168,7 +166,12 @@ var _ = {};
 
   // Calls the method named by functionOrKey on each value in the list.
   // Note: you will nead to learn a bit about .apply to complete this.
-  _.invoke = function(collection, functionOrKey, args) {
+  _.invoke = function(collection, cb) {
+    var result = [];
+    for (var i = 0; i < collection.length; i++) {
+      result.push(cb(collection[i]));
+    };
+    return result;
   };
 
   // Reduces an array or object to a single value by repetitively calling
@@ -186,15 +189,14 @@ var _ = {};
   //   }, 0); // should be 6
 
   _.reduce = function(collection, iterator, accumulator) {
-    accumulator = 0;
-    iterator = function(number){
-    accumulator += number;
+    if(accumulator === undefined){
+      accumulator = collection[0];
     }
     for (var i = 0; i < collection.length; i++) {
-      iterator(collection[i]);
+      accumulator = iterator(accumulator, collection[i]);
     };
     return accumulator;
-  };
+} 
 
   // Determine if the array or object contains a given value (using `===`).
   _.contains = function(collection, target) {
@@ -229,30 +231,34 @@ var _ = {};
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     var result = true;
+    if(iterator === undefined){
+      return true;
+    }
     for (var i = 0; i < collection.length; i++){
-      if (iterator(collection[i]) === false || iterator(collection[i]) === undefined ){
+      if (iterator(collection[i]) === false || iterator(collection[i]) === undefined || iterator(collection[i]) === 0){
         result = false;
       }
     }
     return result;
+    
     // TIP: Try re-using reduce() here.
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
-  _.some = function(collection, iterator) {
-    var result = false;
+   _.some = function(collection, iterator) {
+    if(iterator === undefined){
+        iterator = function(x){
+          return x;
+        }
+    }
     for (var i = 0; i < collection.length; i++) {
-      if(iterator(collection[i]) === true){
-        result =true;
-        return result;
+      if(iterator(collection[i])){
+        return true;
       }
     };
-    return result;
-    // TIP: There's a very clever way to re-use every() here.
+    return false;
   };
-
-
   /**
    * OBJECTS
    * =======
@@ -280,7 +286,15 @@ var _ = {};
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
-  _.defaults = function(obj) {
+  _.defaults = function(obj1, obj2) {
+    for (var key in obj2){
+      if (obj1.hasOwnProperty(obj2[key])) {
+        obj1[key] = obj1[key];
+      }else{
+        obj1[key] = obj2[key];   
+      };
+    }
+    return obj1;
   };
 
 
@@ -321,7 +335,16 @@ var _ = {};
   // _.memoize should return a function that when called, will check if it has
   // already computed the result for the given argument and return that value
   // instead if possible.
-  _.memoize = function(func) {
+  _.memoize = function(func, arg) {
+    var stored = {};
+
+    if (stored.hasOwnProperty(arg.tostring())) {
+      return stored[arg.tostring()];
+    }else{
+      stored[arg.tostring()] = func(arg); 
+      return func(arg);
+    }
+  
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -330,7 +353,8 @@ var _ = {};
   // The arguments for the original function are passed after the wait
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
-  _.delay = function(func, wait) {
+  _.delay = function(func, wait, a, b) {
+    setTimeout(func(a, b), wait);
   };
 
 
