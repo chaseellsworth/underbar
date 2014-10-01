@@ -168,11 +168,18 @@ var _ = {};
   // Note: you will nead to learn a bit about .apply to complete this.
   _.invoke = function(collection, cb) {
     var result = [];
-    for (var i = 0; i < collection.length; i++) {
-      result.push(cb(collection[i]));
-    };
+    if(typeof(cb) === 'string'){
+      for (var i =0; i<collection.length; i++){      
+        result.push(collection[i][cb]());
+      };
+    }else{
+      for (var i = 0; i < collection.length; i++) {
+        result.push(cb(collection[i]));
+      };
+    }
     return result;
-  };
+  }
+
 
   // Reduces an array or object to a single value by repetitively calling
   // iterator(previousValue, item) for each item. previousValue should be
@@ -277,9 +284,12 @@ var _ = {};
   //   }, {
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
-  _.extend = function(obj1, obj2) {
+  _.extend = function(obj1, obj2, obj3) {
     for(var key in obj2){
       obj1[key] = obj2[key];
+    }
+    for(var key in obj3){
+      obj1[key] = obj3[key];
     }
     return obj1;
   };
@@ -288,7 +298,8 @@ var _ = {};
   // exists in obj
   _.defaults = function(obj1, obj2) {
     for (var key in obj2){
-      if (obj1.hasOwnProperty(obj2[key])) {
+      if (obj1.hasOwnProperty(key)) {
+        //return obj1;
         obj1[key] = obj1[key];
       }else{
         obj1[key] = obj2[key];   
@@ -337,15 +348,15 @@ var _ = {};
   // instead if possible.
   _.memoize = function(func, arg) {
     var stored = {};
-
-    if (stored.hasOwnProperty(arg.tostring())) {
-      return stored[arg.tostring()];
+    if (stored.hasOwnProperty(arg)) {
+      return stored[arg];
     }else{
-      stored[arg.tostring()] = func(arg); 
+      stored[arg] = func(arg); 
+      console.log(stored);
       return func(arg);
     }
-  
   };
+    
 
   // Delays a function for the given number of milliseconds, and then calls
   // it with the arguments supplied.
@@ -369,7 +380,17 @@ var _ = {};
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
-  };
+    var copy = array;
+    for (var i = copy.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = copy[i];
+        copy[i] = copy[j];
+        copy[j] = temp;
+    }
+    return copy;
+  }
+
+  
 
 
   /**
