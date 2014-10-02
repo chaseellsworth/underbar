@@ -166,16 +166,16 @@ var _ = {};
 
   // Calls the method named by functionOrKey on each value in the list.
   // Note: you will nead to learn a bit about .apply to complete this.
-  _.invoke = function(collection, cb) {
+  _.invoke  = function(collection, cb) {
     var result = [];
     if(typeof(cb) === 'string'){
       for (var i =0; i<collection.length; i++){      
         result.push(collection[i][cb]());
-      };
+      }
     }else{
       for (var i = 0; i < collection.length; i++) {
-        result.push(cb(collection[i]));
-      };
+        result.push(cb.apply(collection[i]));
+      }
     }
     return result;
   }
@@ -346,16 +346,16 @@ var _ = {};
   // _.memoize should return a function that when called, will check if it has
   // already computed the result for the given argument and return that value
   // instead if possible.
+  
   _.memoize = function(func, arg) {
     var stored = {};
-    if (stored.hasOwnProperty(arg)) {
-      return stored[arg];
-    }else{
-      stored[arg] = func(arg); 
-      console.log(stored);
-      return func(arg);
-    }
-  };
+    var check = function(func, arg){
+      if (stored.hasOwnProperty(arg)) {
+      return stored[arg]; 
+      }
+    };
+    return check;
+  }
     
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -365,7 +365,7 @@ var _ = {};
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait, a, b) {
-    setTimeout(func(a, b), wait);
+    setTimeout(function(){func(a, b)}, wait);
   };
 
 
@@ -380,7 +380,10 @@ var _ = {};
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
-    var copy = array;
+    var copy = [];
+    for(var i=0; i<array.length; i++){
+      copy[i] = array[i];
+    };
     for (var i = copy.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
         var temp = copy[i];
@@ -389,6 +392,7 @@ var _ = {};
     }
     return copy;
   }
+
 
   
 
