@@ -347,15 +347,32 @@ var _ = {};
   // already computed the result for the given argument and return that value
   // instead if possible.
   
-  _.memoize = function(func, arg) {
-    var stored = {};
-    var check = function(func, arg){
-      if (stored.hasOwnProperty(arg)) {
-      return stored[arg]; 
+  // _.memoize = function(func, arg) {
+  //   var stored = {};
+  //   var check = function(func, arg){
+  //     if (stored.hasOwnProperty(arg)) {
+  //     return stored[arg]; 
+  //     }
+  //   };
+  //   return check;
+  // }
+
+   _.memoize = function(func) {
+     var memo = {};
+     var slice = Array.prototype.slice;
+
+     return function(){
+      var args = slice.call(arguments);
+
+      if(args in memo){
+        return memo[args];
       }
-    };
-    return check;
+      else{
+        return(memo[args] = func.apply(this,args));
+      }
+    }
   }
+
     
 
   // Delays a function for the given number of milliseconds, and then calls
