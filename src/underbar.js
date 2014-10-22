@@ -358,17 +358,15 @@ var _ = {};
   // }
 
    _.memoize = function(func) {
-     var memo = {};
+     var stored = {};
      var slice = Array.prototype.slice;
-
      return function(){
       var args = slice.call(arguments);
-
-      if(args in memo){
-        return memo[args];
+      if(args in stored){
+        return stored[args];
       }
       else{
-        return(memo[args] = func.apply(this,args));
+        return(stored[args] = func.apply(this,args));
       }
     }
   }
